@@ -62,7 +62,10 @@ function verifyBearerAuthFactory (options) {
         request.log.error('invalid authorization header: `%s`', header)
         if (contentType) reply.header('content-type', contentType)
         reply.code(401)
-        if (!addHook) return done(invalidKeyError)
+        if (!addHook) {
+          done(invalidKeyError)
+          return
+        }
         reply.send(errorResponse(invalidKeyError))
         return
       }
@@ -77,12 +80,18 @@ function verifyBearerAuthFactory (options) {
       }
       const retErr = new Error('internal server error')
       reply.code(500)
-      if (!addHook) return done(retErr)
+      if (!addHook) {
+        done(retErr)
+        return
+      }
       reply.send(errorResponse(retErr))
     }).catch((err) => {
       const retErr = err instanceof Error ? err : Error(String(err))
       reply.code(500)
-      if (!addHook) return done(retErr)
+      if (!addHook) {
+        done(retErr)
+        return
+      }
       reply.send(errorResponse(retErr))
     })
   }
